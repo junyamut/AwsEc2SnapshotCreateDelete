@@ -1,4 +1,7 @@
 <?php
+namespace Ec2SnapshotsManagement\Commons;
+use \DateTime;
+use \DateTimeZone;
 
 class TimeConversion
 {
