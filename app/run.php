@@ -10,13 +10,15 @@ class Run
     private $iniReader;
     private $argumentValues;
     private $argumentCount;
-    protected $appSettings;
-    protected $isDebug = false;
+    private $appSettings;
+    private $awsCredentials;
+    private $isDebug = false;
     
     public function __construct($argv, $argc) 
     {
         $this->setIniReader();
         $this->setAppSettings();
+        $this->setAwsCredentials();
         $this->setDebugMode();
         $this->setDisplayErrors();
         try {
@@ -38,7 +40,14 @@ class Run
     {
         try {
             require ROOT_DIR . DIRECTORY_SEPARATOR . APP_DIR . DIRECTORY_SEPARATOR . 'Tasks' . DIRECTORY_SEPARATOR . $taskName . '.php';
-            return new $taskName($commands);
+            $task = new RedmineHousekeeping($commands);
+            $task->setAppSettings($this->appSettings)
+                ->setAwsCredentials($this->awsCredentials)
+                ->execute();
+            // print_r(get_class($task));
+            // print_r($task::getDescription());
+            print_r($task::getLogMessages());
+            return;
         } catch (Exception $e) {
             ErrorHandler::handle($e, $this->isDebugMode());
         }
@@ -57,7 +66,7 @@ class Run
     private function setAppSettings() 
     {
         $this->appSettings = $this->iniReader->readFile(SETTINGS_INI);
-        $this->setGlobal('APP_SETTINGS', $this->appSettings);
+        // $this->setGlobal('APP_SETTINGS', $this->appSettings);
     }
 
     protected function getAppSettings() 
@@ -68,8 +77,22 @@ class Run
     private function setDebugMode() {
         if (isset($this->getAppSettings()['general']['debug']) && $this->getAppSettings()['general']['debug'] == 1) {            
             $this->isDebug = true;
-            $this->setGlobal('DEBUG_MODE', $this->isDebug);
+            // $this->setGlobal('DEBUG_MODE', $this->isDebug);
         }
+    }
+
+    private function setAwsCredentials()
+    {
+        $credentialsProvider = new AwsCredentials();
+        $this->awsCredentials = $credentialsProvider->setAwsCredentials([
+            'iniFile' => AWS_CREDENTIALS_INI,
+            'profile' => $this->getAppSettings()['aws_defaults']['profile']
+        ])->getAwsCredentials();
+    }
+
+    private function getAwsCredentials()
+    {
+        return $this->awsCredentials;
     }
 
     protected function isDebugMode() {

@@ -35,6 +35,18 @@ class Messages
         
         return iconv('UTF-8', 'UTF-8//TRANSLIT', $text);
     }
+
+    public static function formatLogMessage($status = null, $message = null)
+    {
+        // $message .= '--------------------' . PHP_EOL;
+        return date('Y-m-d H:i:s') . ' :: Status: ' . $status . ', Message: ' . $message . PHP_EOL;
+        // $message .= '--------------------' . PHP_EOL;        
+    }
+
+    public static function splitLogMessages($logMessages = [])
+    {
+        return implode(',', $logMessages);
+    }
 }
 
 ?>
