@@ -57,12 +57,12 @@ class Ec2SnapshotsManager
         return $this->client->describeSnapshots($this->filters);
     }
 
-    public function createSnapshots($volumeId, $description = '', $dryRun =  true)
+    public function createSnapshot($volumeId, $description = '', $dryRun =  true)
     {
         return $this->client->createSnapshot([
             'DryRun' => $dryRun,
             'Description' => $description,
-            'VolumeId' => $snapshotId
+            'VolumeId' => $volumeId
         ]);
     }
 
@@ -72,6 +72,20 @@ class Ec2SnapshotsManager
             'DryRun' => $dryRun,
             'SnapshotId' => $snapshotId
         ]);
+    }
+
+    public function deleteMultipleSnapshots($snapshots = [], $dryRun = true)
+    {
+        if (!is_array($snapshots) || empty($snapshots)) {
+            return false;
+        }
+
+        $results = [];
+        foreach ($snapshots as $snapshot) {
+            $results[] = $this->deleteSnapshot($snapshot, $dryRun);
+        }
+
+        return $results;
     }
 
     public function filters($filters = []) 
