@@ -47,34 +47,8 @@ class ErrorHandler
         if (empty(self::$message)) {
             self::$message = Messages::getMessage(ResponseStates::S_UNKNOWN_ERROR);
         }
-
-        // if (self::$isDebug == true) {
-            // $additionalInfo = ' in ' . $exception->getFile() . ' @ line ' . $exception->getLine();        
-        // }
-        // switch ($exception->getCode()) {
-        //     case 404:
-        //         $message = $exception->getCode() . ' :: Not found';
-        //         break;
-        //     default:                                
-        //         $tmp = json_decode($exception->getMessage());
-        //         if (json_last_error() == JSON_ERROR_NONE) {
-        //             !empty($additionalInfo) ? $tmp->{'additionalInfo'} = $additionalInfo : '';
-        //             $message = $tmp;
-        //         } else {
-        //             $message = $exception->getMessage() . $additionalInfo;
-        //         }
-        //         break;
-        // }
-        // http_response_code($exception->getCode());
-        // header('Content-Type: application/json');
-        // $response = json_encode(array(
-        //         'status' => self::$statusCode,
-        //         'alertcode' => self::$alertCode,
-        //         'message' => $message
-        //     )
-        // );
         $additionalInfo = ' in ' . $exception->getFile() . ' @ line ' . $exception->getLine();
-        $message = date('Y-m-d H:i:s') . ' :: Status: ' . self::$statusCode . ' AlertCode: ' . self::$alertCode . ' Message: ' . ($exception->getMessage() . $additionalInfo) . PHP_EOL;
+        $message = date('Y-m-d H:i:s') . ' :: Status: ' . self::$statusCode . ', AlertCode: ' . self::$alertCode . ', Message: ' . ($exception->getMessage() . $additionalInfo) . PHP_EOL;
         $output = fopen('php://output', 'r+');
         fputs($output, $message);
         if (LOG_ERRORS) {

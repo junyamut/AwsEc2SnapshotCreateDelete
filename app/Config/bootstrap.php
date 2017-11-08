@@ -62,7 +62,7 @@ function handleError($errno, $errstr, $errfile, $errline)
         case E_USER_DEPRECATED: // 16384 //
             $typestr = 'E_USER_DEPRECATED'; break;
     }
-    $message = date('Y-m-d H:i:s') . ' :: ' . $typestr . ': ' . $errstr . ' in ' . $errfile . ' @ line ' . $errline . PHP_EOL;    
+    $message = date('Y-m-d H:i:s') . ' :: Status: ' . $typestr . ', Message: ' . $errstr . ' in ' . $errfile . ' @ line ' . $errline . PHP_EOL;    
     $output = fopen('php://output', 'r+');
     fputs($output, $message);
     if (LOG_ERRORS) {
