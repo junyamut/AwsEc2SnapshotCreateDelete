@@ -1,0 +1,5 @@
+app/Config/credentials.ini
+app/Config/settings.ini
+app/Tasks/*
+composer.lock
+logs/*
