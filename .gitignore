@@ -3,3 +3,4 @@ app/Config/settings.ini
 app/Tasks/*
 composer.lock
 logs/*
+*.log
