@@ -57,6 +57,23 @@ class Ec2SnapshotsManager
         return $this->client->describeSnapshots($this->filters);
     }
 
+    public function createSnapshots($volumeId, $description = '', $dryRun =  true)
+    {
+        return $this->client->createSnapshot([
+            'DryRun' => $dryRun,
+            'Description' => $description,
+            'VolumeId' => $snapshotId
+        ]);
+    }
+
+    public function deleteSnapshot($snapshotId, $dryRun = true)
+    {
+        return $this->client->deleteSnapshot([
+            'DryRun' => $dryRun,
+            'SnapshotId' => $snapshotId
+        ]);
+    }
+
     public function filters($filters = []) 
     {
         if (empty($filters)) {
