@@ -6,8 +6,7 @@ interface TaskTemplate
     public static function getName();
     public static function getDescription();
     public static function getLogMessages();
-    public function execute();
-    public function setAppSettings($appSettings);
+    public function execute();    
     public function setAwsCredentials($awsCredentials);
 }
 
