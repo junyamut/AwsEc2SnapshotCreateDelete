@@ -8,11 +8,9 @@ class ErrorHandler
     private static $statusCode;
     private static $alertCode;
     private static $message;
-    private static $isDebug;
     
-    public static function handle($exception, $isDebug = false) 
-    {        
-        self::$isDebug = $isDebug;
+    public static function handle($exception) 
+    {
         self::handleException($exception);        
     }
 
