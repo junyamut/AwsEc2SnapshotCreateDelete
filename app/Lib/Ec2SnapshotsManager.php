@@ -66,6 +66,18 @@ class Ec2SnapshotsManager
         ]);
     }
 
+    public function createMultipleSnapshots($snapshots = [], $description = '', $dryRun = true)
+    {
+        if (!is_array($snapshots) || empty($snapshots)) {
+            return false;
+        }
+        $results = [];
+        foreach ($snapshots as $snapshot) {
+            $results[] = $this->createSnapshot($snapshot, $description, $dryRun);
+        }
+        return $results;
+    }
+
     public function deleteSnapshot($snapshotId, $dryRun = true)
     {
         return $this->client->deleteSnapshot([
@@ -79,13 +91,26 @@ class Ec2SnapshotsManager
         if (!is_array($snapshots) || empty($snapshots)) {
             return false;
         }
-
         $results = [];
         foreach ($snapshots as $snapshot) {
             $results[] = $this->deleteSnapshot($snapshot, $dryRun);
         }
-
         return $results;
+    }
+
+    public function searchInResult($terms = [], $result)
+    {        
+        if (is_object($terms)) {
+            return false;
+        }
+        if (is_string($terms)) {
+            $terms = explode(',', $terms);
+        }
+        $found = [];
+        foreach($terms as $key => $term) {
+            $found[] = $term . ': ' . $result->search($term);
+        }
+        return $found;
     }
 
     public function filters($filters = []) 
