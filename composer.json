@@ -1,6 +1,7 @@
 {
     "require": {
         "aws/aws-sdk-php": "3.*",
-        "piwik/ini": "^1.0"
+        "piwik/ini": "^1.0",
+        "katzgrau/klogger": "dev-master"
     }
 }

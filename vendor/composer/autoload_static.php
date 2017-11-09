@@ -17,8 +17,13 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
     public static $prefixLengthsPsr4 = array (
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Piwik\\Ini\\' => 10,
+        ),
+        'K' => 
+        array (
+            'Katzgrau\\KLogger\\' => 17,
         ),
         'J' => 
         array (
@@ -37,6 +42,10 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -44,6 +53,10 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
         'Piwik\\Ini\\' => 
         array (
             0 => __DIR__ . '/..' . '/piwik/ini/src',
+        ),
+        'Katzgrau\\KLogger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/katzgrau/klogger/src',
         ),
         'JmesPath\\' => 
         array (
@@ -67,11 +80,16 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
         ),
     );
 
+    public static $classMap = array (
+        'Katzgrau\\KLogger\\Logger' => __DIR__ . '/..' . '/katzgrau/klogger/src/Logger.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$classMap;
 
         }, null, ClassLoader::class);
     }
