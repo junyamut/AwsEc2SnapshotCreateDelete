@@ -22,9 +22,14 @@ class ConsoleArguments
         return $this->valuesList[2];
     }
 
-    public function getCommands()
+    public function getOptions()
     {
-        return array_slice($this->getArgumentsAsArray(), 3);
+        $options = implode(' ', array_slice($this->getArgumentsAsArray(), $this->minArgumentCount));
+        if (preg_match('/^--([a-z0-9-]{1,})\s([a-z0-9]{1,})|^--([a-z0-9]{1,})/i', $options, $match)) {
+            unset($match[0]);
+            return array_values(array_filter($match));
+        }
+        return false;
     }
 
     public function getArgumentsAsArray() 
@@ -45,7 +50,7 @@ class ConsoleArguments
     private function validate() 
     {
         if ($this->count < $this->minArgumentCount) {
-            throw new TaskException(Messages::getMessage(ResponseStates::S_MISSING_ARGUMENT));
+            throw new TaskException(Messages::getMessage(ResponseStates::S_MISSING_ARGUMENT), ResponseStates::S_MISSING_ARGUMENT);
         }
     }
 }
