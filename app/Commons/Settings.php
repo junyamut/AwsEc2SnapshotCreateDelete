@@ -5,6 +5,7 @@ use \stdClass;
 abstract class Settings
 {    
     private static $config;
+    private static $logger;
     private static $appSettings;
 
     public static function load($appSettings = [])
@@ -15,6 +16,16 @@ abstract class Settings
     public static function getConfig()
     {
         return self::$config;
+    }
+
+    public static function setLogger($logger)
+    {
+        self::$logger = $logger;
+    }
+
+    public static function getLogger()
+    {
+        return self::$logger;
     }
 
     public static function convert()
