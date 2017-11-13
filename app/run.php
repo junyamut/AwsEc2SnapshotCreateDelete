@@ -54,7 +54,7 @@ class Run
         Settings::convert();
         //[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n DEFAULT FORMAT
         $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s');
-        $consoleFormatter = new LineFormatter("- %channel%.%level_name%: %message% %context%" . PHP_EOL);
+        $consoleFormatter = new LineFormatter("- %message% %context%" . PHP_EOL);
         $stream = new StreamHandler(LOG_DIR . '/app-' . date('Y-m-d') . '.log', Logger::DEBUG);
         $stream->setFormatter($streamFormatter);
         $console = new StdoutHandler();
