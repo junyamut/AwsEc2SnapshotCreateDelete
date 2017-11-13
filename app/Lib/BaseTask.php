@@ -56,7 +56,6 @@ abstract class BaseTask implements TaskTemplate
         print 'Task: ' . $this->getName() . PHP_EOL;
         print 'Description: ' . $this->getDescription() . PHP_EOL;
         print Messages::getMessage(ResponseStates::S_VIEW_LOGS_NOTICE) . PHP_EOL;
-        // print Messages::getMessage(ResponseStates::S_TASK_DONE_NOTICE) . PHP_EOL;
     }
 }
 

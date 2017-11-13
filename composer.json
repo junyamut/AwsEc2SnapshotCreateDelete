@@ -2,6 +2,7 @@
     "require": {
         "aws/aws-sdk-php": "3.*",
         "piwik/ini": "^1.0",
-        "katzgrau/klogger": "dev-master"
+        "monolog/monolog": "^1.23",
+        "kmelia/monolog-stdout-handler": "^1.2"
     }
 }

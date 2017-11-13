@@ -5,7 +5,7 @@ class Messages
 {
     public static $missingArgument = 'Missing an argument!'; // 3001
     public static $methodNotFound = 'Method was not found.'; // 4001
-    public static $viewLogFileNotice = 'View logs for more details.'; //  5001
+    public static $viewLogFileNotice = 'View logs @ ./logs/app-{Y-m-d}.log for more details.'; //  5001
     public static $taskDoneNotice = 'Done with task.'; //  5002
     public static $unknownError = 'Unknown error occurred.'; // NONE
     public static $taskExit = 'Exiting task...'; // 10000
@@ -59,11 +59,11 @@ class Messages
         if (is_string($messages)) {
             $messages = explode(',', $messages);
         }        
-        $concat = '';
+        $concat = [];
         foreach ($messages as $message) {
-            $concat .= "\t" .  $message . PHP_EOL;
+            $concat[] = self::convertToUtf8($label) . PHP_EOL . self::convertToUtf8($message) . PHP_EOL;
         }
-        return self::convertToUtf8($label) . PHP_EOL . self::convertToUtf8($concat);
+        return $concat;
     }
 }
 

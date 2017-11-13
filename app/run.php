@@ -1,7 +1,11 @@
 <?php
 use Piwik\Ini\IniReader;
 use Psr\Log\LogLevel;
-use Katzgrau\KLogger\Logger;
+// use Katzgrau\KLogger\Logger;
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\StdoutHandler;
 use Ec2SnapshotsManagement\Commons\Settings;
 use Ec2SnapshotsManagement\Exceptions\TaskException;
 use Ec2SnapshotsManagement\Exceptions\ErrorHandler;
@@ -48,7 +52,17 @@ class Run
     {        
         Settings::load($this->appSettings);
         Settings::convert();
-        Settings::setLogger(new Logger(LOG_DIR, LogLevel::DEBUG, ['extension' => 'log']));
+        //[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n DEFAULT FORMAT
+        $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s');
+        $consoleFormatter = new LineFormatter("- %channel%.%level_name%: %message% %context%" . PHP_EOL);
+        $stream = new StreamHandler(LOG_DIR . '/app-' . date('Y-m-d') . '.log', Logger::DEBUG);
+        $stream->setFormatter($streamFormatter);
+        $console = new StdoutHandler();
+        $console->setFormatter($consoleFormatter);
+        $logger = new Logger('AWS_EC2_SS_Manager');
+        $logger->pushHandler($stream);
+        $logger->pushHandler($console);
+        Settings::setLogger($logger);
     }
 
     private function setAwsCredentials()

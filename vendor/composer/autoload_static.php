@@ -21,9 +21,9 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
             'Psr\\Http\\Message\\' => 17,
             'Piwik\\Ini\\' => 10,
         ),
-        'K' => 
+        'M' => 
         array (
-            'Katzgrau\\KLogger\\' => 17,
+            'Monolog\\' => 8,
         ),
         'J' => 
         array (
@@ -54,9 +54,9 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
         array (
             0 => __DIR__ . '/..' . '/piwik/ini/src',
         ),
-        'Katzgrau\\KLogger\\' => 
+        'Monolog\\' => 
         array (
-            0 => __DIR__ . '/..' . '/katzgrau/klogger/src',
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'JmesPath\\' => 
         array (
@@ -80,8 +80,14 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
         ),
     );
 
-    public static $classMap = array (
-        'Katzgrau\\KLogger\\Logger' => __DIR__ . '/..' . '/katzgrau/klogger/src/Logger.php',
+    public static $prefixesPsr0 = array (
+        'M' => 
+        array (
+            'Monolog' => 
+            array (
+                0 => __DIR__ . '/..' . '/kmelia/monolog-stdout-handler/src',
+            ),
+        ),
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -89,7 +95,7 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$classMap;
+            $loader->prefixesPsr0 = ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

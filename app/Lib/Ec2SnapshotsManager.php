@@ -72,7 +72,7 @@ class Ec2SnapshotsManager
             $result = $promise->wait();
             return $result;
         } catch (AwsException $e) {
-            Settings::getLogger()->error(Messages::formatMultilineMessage(get_class(), $this->getAwsExceptionDetails($e)));
+            Settings::getLogger()->error(get_class(), $this->getAwsExceptionDetails($e));
         }
     }
 
@@ -97,7 +97,7 @@ class Ec2SnapshotsManager
             ]);        
             $promise->wait();
         } catch (AwsException $e) {
-            Settings::getLogger()->error(Messages::formatMultilineMessage(get_class(), $this->getAwsExceptionDetails($e)));
+            Settings::getLogger()->error(get_class(), $this->getAwsExceptionDetails($e));
         }
     }
 
