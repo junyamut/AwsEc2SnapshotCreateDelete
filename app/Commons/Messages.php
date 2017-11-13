@@ -4,7 +4,9 @@ namespace Ec2SnapshotsManagement\Commons;
 class Messages 
 {
     public static $missingArgument = 'Missing an argument!'; // 3001
-    public static $methodNotFound = 'Method was not found.'; //4001
+    public static $methodNotFound = 'Method was not found.'; // 4001
+    public static $viewLogFileNotice = 'View logs for more details.'; //  5001
+    public static $taskDoneNotice = 'Done with task.'; //  5002
     public static $unknownError = 'Unknown error occurred.'; // NONE
     public static $taskExit = 'Exiting task...'; // 10000
     public static $generalError = 'Sorry, I cannot process this task'; // 10001
@@ -19,6 +21,12 @@ class Messages
                 break;
             case 4001;
                 $message = self::$methodNotFound;
+                break;
+            case 5001;
+                $message = self::$viewLogFileNotice;
+                break;
+            case 5002;
+                $message = self::$taskDoneNotice;
                 break;
             case 10000;
                 $message = self::$taskExit;

@@ -17,6 +17,8 @@ class ResponseStates
     const S_GENERAL_ERROR = 10001;
     const S_MISSING_ARGUMENT = 3001;    
     const S_METHOD_NOT_FOUND = 4001;
+    const S_VIEW_LOGS_NOTICE = 5001;
+    const S_TASK_DONE_NOTICE = 5002;
 }
 
 ?>
