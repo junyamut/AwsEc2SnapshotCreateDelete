@@ -13,8 +13,10 @@ class ResponseStates
     const MAINTENANCE_MODE = 503;
 
     const S_UNKNOWN_ERROR = 0;
-    const S_GENERAL_ERROR = 10000;
+    const S_TASK_EXIT = 10000;
+    const S_GENERAL_ERROR = 10001;
     const S_MISSING_ARGUMENT = 3001;    
+    const S_METHOD_NOT_FOUND = 4001;
 }
 
 ?>
