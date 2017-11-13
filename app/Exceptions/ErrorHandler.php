@@ -39,6 +39,8 @@ class ErrorHandler
         }
         $additionalInfo = ' in ' . $exception->getFile() . ' @ line ' . $exception->getLine();
         $message = '(' . self::$alertCode . ') ' . ($exception->getMessage() . $additionalInfo);
+        // $output = fopen('php://output', 'r+');
+        // fputs($output, $message);
         Settings::getLogger()->warning($message);
     }
 }

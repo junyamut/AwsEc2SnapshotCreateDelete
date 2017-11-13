@@ -50,6 +50,14 @@ abstract class BaseTask implements TaskTemplate
             throw new TaskException($message, ResponseStates::S_METHOD_NOT_FOUND);
         }
     }
+
+    public function printTaskDetails()
+    {
+        print 'Task: ' . $this->getName() . PHP_EOL;
+        print 'Description: ' . $this->getDescription() . PHP_EOL;
+        print Messages::getMessage(ResponseStates::S_VIEW_LOGS_NOTICE) . PHP_EOL;
+        // print Messages::getMessage(ResponseStates::S_TASK_DONE_NOTICE) . PHP_EOL;
+    }
 }
 
 ?>

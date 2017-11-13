@@ -6,6 +6,7 @@ use Ec2SnapshotsManagement\Commons\Settings;
 use Ec2SnapshotsManagement\Exceptions\TaskException;
 use Ec2SnapshotsManagement\Exceptions\ErrorHandler;
 use Ec2SnapshotsManagement\Helpers\ConsoleArguments;
+use Ec2SnapshotsManagement\Commons\Messages;
 use Ec2SnapshotsManagement\Helpers\AwsCredentials;
 
 class Run 
@@ -24,23 +25,20 @@ class Run
         $this->setAwsCredentials();        
         try {
             $task = new ConsoleArguments($argv, $argc);
-            $this->runTask($task->getTaskName(), $task->getCommands());
+            $this->runTask($task->getTaskName(), $task->getOptions());
         } catch (Exception $e) {
+            ErrorHandler::setAlertCode($e->getCode());
             ErrorHandler::handle($e);
         }        
     }
 
-    private function runTask($taskName, $commands)
+    private function runTask($taskName, $options)
     {
         try {
             require ROOT_DIR . DIRECTORY_SEPARATOR . APP_DIR . DIRECTORY_SEPARATOR . 'Tasks' . DIRECTORY_SEPARATOR . $taskName . '.php';
-            $task = new RedmineHousekeeping($commands);
-            $task->setAwsCredentials($this->awsCredentials)
-                ->execute();
-            // print_r($task->getName());
-            // print_r($task->getDescription());
-            print_r($task->getLogMessages());
-            return;
+            $task = new RedmineHousekeeping($options);
+            $task->printTaskDetails();
+            $task->setAwsCredentials($this->awsCredentials)->execute();
         } catch (Exception $e) {
             ErrorHandler::handle($e);
         }
@@ -78,12 +76,6 @@ class Run
             ini_set('display_startup_errors', 1);
             ini_set('error_reporting', E_ALL);
         }
-    }
-
-    private function setGlobal($key, $value)
-    {
-        global ${$key};
-        ${$key} = $value;
     }
 }    
 ?>
