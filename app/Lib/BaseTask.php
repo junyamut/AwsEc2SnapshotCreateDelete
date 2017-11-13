@@ -38,7 +38,7 @@ abstract class BaseTask implements TaskTemplate
         return $this;
     }
 
-    public function callbackMethod($methodName, $parameters = [])
+    public function callbackMethod($methodName, $parameters = null)
     {
         if (empty($methodName)) {
             return;
