@@ -8,6 +8,7 @@ interface TaskTemplate
     public function getDescription();
     public function execute();    
     public function setAwsCredentials($awsCredentials);
+    public function callbackMethod($methodName, $args);
 }
 
 ?>

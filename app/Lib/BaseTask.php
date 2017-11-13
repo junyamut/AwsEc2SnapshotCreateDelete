@@ -1,12 +1,16 @@
 <?php
 namespace Ec2SnapshotsManagement\Lib;
+use Ec2SnapshotsManagement\Exceptions\TaskException;
 use Ec2SnapshotsManagement\Interfaces\TaskTemplate;
+use Ec2SnapshotsManagement\Commons\Messages;
+use Ec2SnapshotsManagement\Commons\ResponseStates;
 
 abstract class BaseTask implements TaskTemplate
 {
     protected $taskName;
     protected $taskDescription;
     protected $logMessages;
+    protected $options;
     protected $awsCredentials;
 
     public function getName()
@@ -26,12 +30,25 @@ abstract class BaseTask implements TaskTemplate
             
     public function execute()
     {
-
+        return $this;
     }
 
     public function setAwsCredentials($awsCredentials)
     {
+        return $this;
+    }
 
+    public function callbackMethod($methodName, $parameters = [])
+    {
+        if (empty($methodName)) {
+            return;
+        }
+        if (method_exists($this, $methodName)) {
+            return $this->{$methodName}($parameters);
+        } else {
+            $message = Messages::formatTaskMessage($this->getName(), 'Call to method {' . $methodName . '} - ' . Messages::getMessage(ResponseStates::S_METHOD_NOT_FOUND));
+            throw new TaskException($message, ResponseStates::S_METHOD_NOT_FOUND);
+        }
     }
 }
 
