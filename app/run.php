@@ -1,7 +1,6 @@
 <?php
 use Piwik\Ini\IniReader;
 use Psr\Log\LogLevel;
-// use Katzgrau\KLogger\Logger;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
@@ -53,7 +52,7 @@ class Run
         Settings::load($this->appSettings);
         Settings::convert();
         //[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n DEFAULT FORMAT
-        $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s');
+        $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s.u');
         $consoleFormatter = new LineFormatter("- %message% %context%" . PHP_EOL);
         $stream = new StreamHandler(LOG_DIR . '/app-' . date('Y-m-d') . '.log', Logger::DEBUG);
         $stream->setFormatter($streamFormatter);

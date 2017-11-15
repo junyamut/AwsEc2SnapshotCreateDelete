@@ -51,7 +51,7 @@ class Messages
 
     public static function formatTaskMessage($taskName = null, $message = null)
     {
-        return self::convertToUtf8($taskName) . ' :: ' . self::convertToUtf8($message);
+        return self::convertToUtf8($taskName) . ': ' . self::convertToUtf8($message);
     }
 }
 
