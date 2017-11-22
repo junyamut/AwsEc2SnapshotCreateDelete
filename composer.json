@@ -4,6 +4,7 @@
         "piwik/ini": "^1.0",
         "monolog/monolog": "^1.23",
         "kmelia/monolog-stdout-handler": "^1.2",
-        "lavary/crunz": "^1.4"
+        "lavary/crunz": "^1.4",
+        "symfony/console": "^3.3"
     }
 }
