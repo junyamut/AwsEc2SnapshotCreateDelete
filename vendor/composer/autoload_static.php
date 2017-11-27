@@ -178,6 +178,17 @@ class ComposerStaticInit7e9078965ccc81b6cc2136bb2821ba85
                 0 => __DIR__ . '/..' . '/kmelia/monolog-stdout-handler/src',
             ),
         ),
+        'C' => 
+        array (
+            'Commando' => 
+            array (
+                0 => __DIR__ . '/..' . '/nategood/commando/src',
+            ),
+            'Colors' => 
+            array (
+                0 => __DIR__ . '/..' . '/kevinlebrun/colors.php/src',
+            ),
+        ),
     );
 
     public static function getInitializer(ClassLoader $loader)

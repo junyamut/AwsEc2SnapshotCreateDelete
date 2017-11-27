@@ -7,4 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Monolog' => array($vendorDir . '/kmelia/monolog-stdout-handler/src'),
+    'Commando' => array($vendorDir . '/nategood/commando/src'),
+    'Colors' => array($vendorDir . '/kevinlebrun/colors.php/src'),
 );

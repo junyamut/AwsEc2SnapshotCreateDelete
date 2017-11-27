@@ -23,23 +23,19 @@ class ConsoleArguments
     }
 
     public function getOptions()
-    {
-        $options = implode(' ', array_slice($this->getArgumentsAsArray(), $this->minArgumentCount));
-        if (preg_match('/^--([a-z0-9-]{1,})\s([a-z0-9]{1,})|^--([a-z0-9]{1,})/i', $options, $match)) {
-            unset($match[0]);
-            return array_values(array_filter($match));
-        }
-        return false;
+    {        
+        $this->options = array_slice($this->valuesList, $this->minArgumentCount);
+        return $this;
     }
 
-    public function getArgumentsAsArray() 
+    public function asArray()
     {
-        return $this->valuesList;
+        return $this->options;
     }
 
-    public function getArgumentsAsString() 
+    public function asString()
     {
-        return implode(',', $this->valuesList);
+        return implode(' ', $this->options);
     }
 
     public function getCount() 

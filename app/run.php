@@ -28,20 +28,22 @@ class Run
         $this->setAwsCredentials();        
         try {
             $task = new ConsoleArguments($argv, $argc);
-            $this->runTask($task->getTaskName(), $task->getOptions());
+            $this->runTask($task->getTaskName());
         } catch (Exception $e) {
             ErrorHandler::setAlertCode($e->getCode());
             ErrorHandler::handle($e);
         }        
     }
 
-    private function runTask($taskName, $options)
+    private function runTask($taskName)
     {
         try {
             require ROOT_DIR . DIRECTORY_SEPARATOR . APP_DIR . DIRECTORY_SEPARATOR . 'Tasks' . DIRECTORY_SEPARATOR . $taskName . '.php';
-            $task = new RedmineHousekeeping($options);
+            $task = new $taskName();
             $task->printTaskDetails();
-            $task->setAwsCredentials($this->awsCredentials)->execute();
+            $task->setAwsCredentials($this->awsCredentials)
+                ->initConsole()
+                ->execute();
         } catch (Exception $e) {
             ErrorHandler::handle($e);
         }
