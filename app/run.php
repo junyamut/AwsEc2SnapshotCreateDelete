@@ -61,7 +61,7 @@ class Run
         $stream->setFormatter($streamFormatter);
         $console = new StdoutHandler();
         $console->setFormatter($consoleFormatter);
-        $logger = new Logger('AWS_EC2_SS_Manager');
+        $logger = new Logger($this->appSettings['general']['app_name']);
         $logger->pushHandler($stream);
         $logger->pushHandler($console);
         Settings::setLogger($logger);
