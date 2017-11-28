@@ -1,13 +1,13 @@
 <?php
 namespace Ec2SnapshotsManagement\Lib;
-use Ec2SnapshotsManagement\Lib\BaseConsole;
+use Ec2SnapshotsManagement\Commons\Settings;
 use Ec2SnapshotsManagement\Exceptions\TaskException;
 use Ec2SnapshotsManagement\Interfaces\TaskTemplate;
 use Ec2SnapshotsManagement\Commons\Messages;
 use Ec2SnapshotsManagement\Commons\ResponseStates;
 
 abstract class BaseTask implements TaskTemplate
-{
+{    
     protected $taskName;
     protected $taskDescription;
     protected $logMessages;
@@ -54,6 +54,7 @@ abstract class BaseTask implements TaskTemplate
 
     public function printTaskDetails()
     {
+        print 'Welcome to ' . Settings::getConfig()->general->app_name . '!' . PHP_EOL;
         print 'Task: ' . $this->getName() . PHP_EOL;
         print 'Description: ' . $this->getDescription() . PHP_EOL;
         print Messages::getMessage(ResponseStates::S_VIEW_LOGS_NOTICE) . PHP_EOL;
