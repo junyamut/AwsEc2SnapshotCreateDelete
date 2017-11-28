@@ -57,7 +57,7 @@ class Run
         //[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n DEFAULT FORMAT
         $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s.u');
         $consoleFormatter = new ColorLineFormatter("[c=yellow]" . "- %message% %context%" . "[/c]" . PHP_EOL);
-        $stream = new StreamHandler(LOG_DIR . '/app-' . date('Y-m-d') . '.log', Logger::DEBUG);
+        $stream = new StreamHandler(LOG_DIR . '/' . $this->appSettings['general']['environment'] . '-' . date('Y-m-d') . '.log', Logger::DEBUG);
         $stream->setFormatter($streamFormatter);
         $console = new StdoutHandler();
         $console->setFormatter($consoleFormatter);
