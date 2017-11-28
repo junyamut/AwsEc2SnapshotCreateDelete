@@ -3,6 +3,7 @@ use Piwik\Ini\IniReader;
 use Psr\Log\LogLevel;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\ColorLineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\StdoutHandler;
 use Ec2SnapshotsManagement\Commons\Settings;
@@ -55,7 +56,7 @@ class Run
         Settings::convert();
         //[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n DEFAULT FORMAT
         $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s.u');
-        $consoleFormatter = new LineFormatter("- %message% %context%" . PHP_EOL);
+        $consoleFormatter = new ColorLineFormatter("[c=yellow]" . "- %message% %context%" . "[/c]" . PHP_EOL);
         $stream = new StreamHandler(LOG_DIR . '/app-' . date('Y-m-d') . '.log', Logger::DEBUG);
         $stream->setFormatter($streamFormatter);
         $console = new StdoutHandler();
