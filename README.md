@@ -22,3 +22,5 @@
 * Sample Job schedule is @ jobs/RedmineHousekeepingTasks.php
 * Definitions @ app/Interfaces/TaskTemplates.php and @ app/Lib/BaseTask.php on how to create a Task class
 * Class for handling AWS EC2 describe/create/delete methods @ app/Lib/Ec2SnapshotsManager.php
+
+*Hosted on NanoAppstore.com @ /home/nano/ec2-snapshots-manager*
