@@ -22,6 +22,7 @@ class Run
     
     public function __construct($argv, $argc) 
     {
+        set_error_handler('self::handleError');
         $iniReader = new IniReader();
         $this->appSettings = $iniReader->readFile(SETTINGS_INI);
         $this->setDebugMode();
@@ -77,21 +78,21 @@ class Run
     }
 
     private function setDebugMode() 
-    {
-        $isDebug = false;
-        if (isset($this->appSettings['general']['debug']) && $this->appSettings['general']['debug'] == 1) {            
-            $isDebug = true;
-        }
-
-        if (!$isDebug) {
-            ini_set('display_errors', 0);
-            ini_set('display_startup_errors', 0);
-            ini_set('error_reporting', 0);
-        } else {
+    {        
+        if (isset($this->appSettings['general']['debug']) && $this->appSettings['general']['debug'] == 1) { // Debug mode
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             ini_set('error_reporting', E_ALL);
+        } else { // Silent - no debug
+            ini_set('display_errors', 0);
+            ini_set('display_startup_errors', 0);
+            ini_set('error_reporting', 0);
         }
+    }
+
+    private static function handleError($errorNum, $errorString, $errorFile, $errorLine) // Wrap the error handling method from ErrorHandler class in a local method
+    {
+        ErrorHandler::handleError($errorNum, $errorString, $errorFile, $errorLine);
     }
 }    
 ?>
