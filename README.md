@@ -1,5 +1,15 @@
 ### AWS EC2 Snapshots Management
 
+*Hosted on NanoAppstore.com: App Home Folder @ /home/nano/ec2-snapshots-manager*
+
+## Steps To Run A Task
+1. Go to the App Home Folder
+2. The command to run a task is *app/console {NAME_OF_TASK_PHP_CLASS_FILE} --execute {COMMAND}*
+3. Alternatively you can go into the app folder and run the following
+4. *./console {NAME_OF_TASK_PHP_CLASS_FILE} --execute {COMMAND}*
+5. For example, *app/console RedmineHousekeeping --execute create*
+6. For additional command line options run, *app/console {NAME_OF_TASK_PHP_CLASS_FILE} --help*
+
 ## Server Requirements
 * Ubuntu 14.04+
 * PHP 5.6+
@@ -22,5 +32,3 @@
 * Sample Job schedule is @ jobs/RedmineHousekeepingTasks.php
 * Definitions @ app/Interfaces/TaskTemplates.php and @ app/Lib/BaseTask.php on how to create a Task class
 * Class for handling AWS EC2 describe/create/delete methods @ app/Lib/Ec2SnapshotsManager.php
-
-*Hosted on NanoAppstore.com @ /home/nano/ec2-snapshots-manager*
