@@ -42,9 +42,9 @@ class Run
         try {
             require ROOT_DIR . DIRECTORY_SEPARATOR . APP_DIR . DIRECTORY_SEPARATOR . 'Tasks' . DIRECTORY_SEPARATOR . $taskName . '.php';
             $task = new $taskName();
-            $task->printTaskDetails();
-            $task->setAwsCredentials($this->awsCredentials)
-                ->initConsole()
+            $task->initConsole()
+                ->printTaskDetails()
+                ->setAwsCredentials($this->awsCredentials)            
                 ->execute();
         } catch (Exception $e) {
             ErrorHandler::handle($e);
