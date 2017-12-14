@@ -10,6 +10,7 @@ interface TaskTemplate
     public function initConsole();
     public function setAwsCredentials($awsCredentials);
     public function callbackMethod($methodName, $args);
+    public function printTaskDetails();
 }
 
 ?>
