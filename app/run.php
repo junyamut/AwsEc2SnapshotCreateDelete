@@ -49,6 +49,7 @@ class Run
         } catch (Exception $e) {
             ErrorHandler::handle($e);
         }
+        return;
     }
 
     private function setAppSettings() 

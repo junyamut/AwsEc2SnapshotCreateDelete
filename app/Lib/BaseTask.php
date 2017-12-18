@@ -11,7 +11,7 @@ use Ec2SnapshotsManagement\Lib\Ec2SnapshotsManager;
 
 abstract class BaseTask implements TaskTemplate
 {    
-    public static $_CONF            = [
+    public $conf                    = [
                                         'command', 
                                         'delete_older_than',  
                                         'is_dry_run',
@@ -24,9 +24,7 @@ abstract class BaseTask implements TaskTemplate
                                     ];
     protected                 
         $awsCredentials,
-        $command,
         $ec2SnapshotManager,
-        $isDryRun,
         $forDeletion,
         $logMessages,
         $snapshotsList;
@@ -40,7 +38,7 @@ abstract class BaseTask implements TaskTemplate
 
     public function __construct($conf = []) 
     {
-        self::$_CONF = array_merge([
+        $this->conf = array_merge([
             'command' => '',
             'delete_older_than' => Settings::getConfig()->rules->delete_older_than,
             'is_dry_run' => Settings::getConfig()->aws_defaults->dry_run,
@@ -53,14 +51,24 @@ abstract class BaseTask implements TaskTemplate
         ], $conf);
     }
 
+    public function __destruct()
+    {
+        unset($this->awsCredentials);
+        unset($this->conf);
+        unset($this->ec2SnapshotManager);
+        unset($this->forDeletion);
+        unset($this->logMessages);
+        unset($this->snapshotsList);
+    }
+
     public function getName()
     {
-        return self::$_CONF['task_name'];
+        return $this->conf['task_name'];
     }
 
     public function getDescription()
     {
-        return self::$_CONF['task_description'];
+        return $this->conf['task_description'];
     }
 
     public function getLogMessages()
@@ -74,18 +82,18 @@ abstract class BaseTask implements TaskTemplate
         return $this;
     }
 
-    private function setEc2SnapshotManager()
+    public function setEc2SnapshotManager()
     {
         $this->ec2SnapshotManager = new Ec2SnapshotsManager([            
             'credentials' => $this->awsCredentials,
-            'region' => self::$_CONF['region'],
-            'version' => self::$_CONF['version'],
-            'volumes' => self::$_CONF['volumes']
+            'region' => $this->conf['region'],
+            'version' => $this->conf['version'],
+            'volumes' => $this->conf['volumes']
         ]);
     }
 
     public function setConf($conf = []) {
-        self::$_CONF = array_merge(self::$_CONF, $conf);
+        $this->conf = array_merge($this->conf, $conf);
     }
 
     public function callbackMethod($methodName, $parameters = null)
@@ -96,17 +104,17 @@ abstract class BaseTask implements TaskTemplate
         if (method_exists($this, $methodName)) {
             return $this->{$methodName}($parameters);
         } else {
-            $message = Messages::formatTaskMessage($this->getName(), 'Call to method {' . $methodName . '} - ' . Messages::getMessage(ResponseStates::S_METHOD_NOT_FOUND));
+            $message = Messages::formatTaskMessage($this->getName(), 'Call to command {' . $methodName . '} - ' . Messages::getMessage(ResponseStates::S_METHOD_NOT_FOUND));
             throw new TaskException($message, ResponseStates::S_METHOD_NOT_FOUND);
         }
     }
-            
+
     public function execute()
     {
         $this->setEc2SnapshotManager();
         $this->getSnapshotsList();
         try {
-            $this->callbackMethod(self::$_CONF['command'], []);
+            $this->callbackMethod($this->conf['command'], []);
         } catch (TaskException $e) {
             ErrorHandler::setAlertCode($e->getCode());
             ErrorHandler::handle($e);
@@ -129,7 +137,7 @@ abstract class BaseTask implements TaskTemplate
 
     protected function enumerate()
     {        
-        Settings::getLogger()->info(Messages::formatTaskMessage(__METHOD__, 'No. of snapshots found = ' . $this->totalSnapshots()));
+        Settings::getLogger()->info(Messages::formatTaskMessage((get_class($this)), 'No. of snapshots found = ' . $this->totalSnapshots()));
         foreach ($this->snapshotsList as $index => $list) {
             Settings::getLogger()->info(('#' . ($index + 1)), [
                 'VolumeId: ' . $list['VolumeId'],
@@ -143,14 +151,14 @@ abstract class BaseTask implements TaskTemplate
     protected function create()
     {
         $forCreation = [];
-        foreach (self::$_CONF['volumes'] as $volumeId) {
-            Settings::getLogger()->info(Messages::formatTaskMessage(__METHOD__, ($volumeId . self::$M_LISTED_FOR_CREATION)));
+        foreach ($this->conf['volumes'] as $volumeId) {
+            Settings::getLogger()->info(Messages::formatTaskMessage((get_class($this) . '::' .  __FUNCTION__), ($volumeId . self::$M_LISTED_FOR_CREATION)));
             $forCreation[] = $volumeId;
         }        
-        $results = $this->ec2SnapshotManager->Ec2ClientConnect()->createMultipleSnapshots($forCreation, self::$_CONF['task_description'], self::$_CONF['is_dry_run']);
-        if (!self::$_CONF['is_dry_run']) {
+        $results = $this->ec2SnapshotManager->Ec2ClientConnect()->createMultipleSnapshots($forCreation, $this->conf['task_description'], $this->conf['is_dry_run']);
+        if (!$this->conf['is_dry_run']) {
             $search = $this->ec2SnapshotManager->searchInMultipleResults('VolumeId, SnapshotId, State, StartTime', $results);        
-            foreach ($search as $found) {
+            foreach ($search as $index => $found) {
                 Settings::getLogger()->info(('#' . ($index + 1)), $found);
             }
         }
@@ -161,23 +169,23 @@ abstract class BaseTask implements TaskTemplate
         $this->beforeDelete();
         foreach ($this->snapshotsList as $snapshot) {
             $age = TimeConversion::timeInterval($snapshot['StartTime'], 'days', 'Asia/Singapore');
-            if (abs($age) >= self::$_CONF['delete_older_than']) {
-                Settings::getLogger()->info(Messages::formatTaskMessage(__METHOD__, ($snapshot['SnapshotId'] . self::$M_LISTED_FOR_DELETION)));
+            if (abs($age) >= $this->conf['delete_older_than']) {
+                Settings::getLogger()->info(Messages::formatTaskMessage((get_class($this) . '::' .  __FUNCTION__), ($snapshot['SnapshotId'] . self::$M_LISTED_FOR_DELETION)));
                 $this->forDeletion[] = $snapshot['SnapshotId'];
             }
         }
-        $this->ec2SnapshotManager->Ec2ClientConnect()->deleteMultipleSnapshots($this->forDeletion, self::$_CONF['is_dry_run']); // result is empty when successful
+        $this->ec2SnapshotManager->Ec2ClientConnect()->deleteMultipleSnapshots($this->forDeletion, $this->conf['is_dry_run']); // result is empty when successful
         $this->afterDelete();
     }
 
     protected function beforeDelete()
     {
         if ($this->totalSnapshots() == 0) {
-            Settings::getLogger()->info(Messages::formatTaskMessage(__METHOD__, self::$M_EMPTY_LIST));
+            Settings::getLogger()->info(Messages::formatTaskMessage((get_class($this) . '::' .  __FUNCTION__), self::$M_EMPTY_LIST));
             throw new TaskException(Messages::getMessage(ResponseStates::S_TASK_EXIT), ResponseStates::S_TASK_EXIT);
         }
-        if ($this->totalSnapshots() <= self::$_CONF['retain_min']) {
-            Settings::getLogger()->info(Messages::formatTaskMessage(__METHOD__, self::$M_COUNT_BELOW_THRESHOLD));
+        if ($this->totalSnapshots() <= $this->conf['retain_min']) {
+            Settings::getLogger()->info(Messages::formatTaskMessage((get_class($this) . '::' .  __FUNCTION__), self::$M_COUNT_BELOW_THRESHOLD));
             throw new TaskException(Messages::getMessage(ResponseStates::S_TASK_EXIT), ResponseStates::S_TASK_EXIT);
         }
         return;
@@ -186,16 +194,16 @@ abstract class BaseTask implements TaskTemplate
     protected function afterDelete()
     {
         if (empty($this->forDeletion)) {
-            Settings::getLogger()->info(Messages::formatTaskMessage(__METHOD__, self::$M_NONE_FOR_DELETION));
+            Settings::getLogger()->info(Messages::formatTaskMessage((get_class($this) . '::' .  __FUNCTION__), self::$M_NONE_FOR_DELETION));
         }
         return;
-    }    
+    }
 
     public function printTaskDetails()
     {
         print 'Welcome to ' . Settings::getConfig()->general->app_name . '!' . PHP_EOL;
-        print 'Task: ' . self::$_CONF['task_name'] . PHP_EOL;
-        print 'Description: ' . self::$_CONF['task_description'] . PHP_EOL;
+        print 'Task: ' . $this->conf['task_name'] . PHP_EOL;
+        print 'Description: ' . $this->conf['task_description'] . PHP_EOL;
         print Messages::getMessage(ResponseStates::S_VIEW_LOGS_NOTICE) . PHP_EOL;
         print PHP_EOL;
         return $this;
