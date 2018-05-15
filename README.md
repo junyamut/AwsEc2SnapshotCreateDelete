@@ -1,4 +1,4 @@
-### AWS EC2 Snapshots Management
+### AWS EC2 Snapshots Management (terminal application only)
 
 *Hosted on NanoAppstore.com: App Home Folder @ /home/nano/ec2-snapshots-manager*
 
