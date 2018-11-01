@@ -1,0 +1,69 @@
+<?php
+use Commando\Command; // This is the CLI library
+// Custom classes below needed to create this task
+use Ec2SnapshotsManagement\Exceptions\TaskException;
+use Ec2SnapshotsManagement\Exceptions\ErrorHandler;
+use Ec2SnapshotsManagement\Commons\Settings;
+use Ec2SnapshotsManagement\Lib\BaseTask; // Skeleton class for tasks
+
+class KallitheaHousekeeping extends BaseTask
+{            
+    private $volumes = ['PLACE-VOLUME-ID-HERE']; // List of volumes for this task, or specify a Volume ID in the command line
+
+    public function __construct($awsCredentials = null) 
+    {
+        parent::__construct([
+            'task_name' => 'Kallithea Snapshots Housekeeping',
+            'task_description' => 'Daily snapshot for Kallithea (code repository) instance volume'
+        ]);
+        if (!empty($awsCredentials)) {
+            $this->awsCredentials = $awsCredentials;
+        }
+    }
+
+    public function __destruct()
+    {
+        parent::__destruct();
+    }
+
+    // Definition of the task console commands
+    public function initConsole()
+    {
+        // Using \Commando\Command class
+        $options = ['enumerate', 'create', 'delete'];
+        $console = new Command();
+        $console->option('execute') // Required command whether to list, create or delete snapshots      
+            ->aka('x')
+            ->aka('exec')
+            ->require()
+            ->describedAs('Run one of these commands: ' . implode(', ', $options))
+            ->must(function($name) use ($options) {
+                return in_array($name, $options);
+            })
+            ->map(function($value) {
+                return $value;
+            });
+        $console->option('dry-run') // Optional command to set dry run flag
+            ->aka('d')
+            ->describedAs('Set as Dry Run only.')
+            ->boolean();
+        $console->option('volume-id') // Optional command to specify volume
+            ->aka('v')            
+            ->aka('vol-id')
+            ->describedAs('Specify a Volume ID for this task.')
+            ->must(function($volume) {
+                return preg_match('/^vol-([a-z0-9]+)$/i', $volume);
+            })
+            ->map(function($value) {
+                return $value;
+            });        
+        parent::setConf([
+            'command' => $console['execute'], 
+            'is_dry_run' => $console['dry-run'] ? true : (bool) Settings::getConfig()->aws_defaults->dry_run, 
+            'volumes' => !empty($console['volume-id']) ? [$console['volume-id']] : $this->volumes
+        ]);
+        return $this;
+    }
+}
+
+?>
