@@ -1,4 +1,4 @@
-# AWS EC2 Snapshots Management (terminal application only)
+# AWS EC2 Snapshots Management
 
 #### (terminal application only)
 
@@ -6,7 +6,7 @@
 
 ## Intro
 
-Originally intended this to grab all of my emails from Grab receipts and Sunlife MF NAVPS reports, then save it to files. In the near future, will write another utility app to parse and collate all the data to Google Spreadsheets so I can keep track of my fare spendings and MF activities.
+A simple terminal application to manage Snapshots of AWS EC2 volumes by creating and deleting old ones as necessary.
 
 ## Requirements
 * Ubuntu 14.04+
