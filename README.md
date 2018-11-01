@@ -1,6 +1,17 @@
-### AWS EC2 Snapshots Management (terminal application only)
+# AWS EC2 Snapshots Management (terminal application only)
 
-*Hosted on NanoAppstore.com: App Home Folder @ /home/nano/ec2-snapshots-manager*
+#### (terminal application only)
+
+*Description: Supposedly a simple AWS snapshots manager terminal app*
+
+## Intro
+
+Originally intended this to grab all of my emails from Grab receipts and Sunlife MF NAVPS reports, then save it to files. In the near future, will write another utility app to parse and collate all the data to Google Spreadsheets so I can keep track of my fare spendings and MF activities.
+
+## Requirements
+* Ubuntu 14.04+
+* PHP 5.6+
+* Composer
 
 ## Steps To Run A Task
 1. Go to the App Home Folder
@@ -9,11 +20,6 @@
 4. *./console {NAME_OF_TASK_PHP_CLASS_FILE} --execute {COMMAND}*
 5. For example, *app/console RedmineHousekeeping --execute create*
 6. For additional command line options run, *app/console {NAME_OF_TASK_PHP_CLASS_FILE} --help*
-
-## Server Requirements
-* Ubuntu 14.04+
-* PHP 5.6+
-* Composer
 
 ## Other Dependencies
 1. AWS SDK for PHP 3.x
