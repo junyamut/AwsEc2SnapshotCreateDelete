@@ -1,0 +1,18 @@
+<?php
+use Crunz\Schedule;
+$projectDir = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . basename(dirname(dirname(__FILE__)));
+$kallitheaJob = new Schedule();
+$kallitheaJob->run('app/console KallitheaHousekeeping -x create')
+    ->in($projectDir)
+    ->daily()
+    ->at('23:05')
+    ->description('Kallithea :: Create a snapshot @ 11:05PM daily')
+    ->appendOutputTo('logs/jobs.log');
+$kallitheaJob->run('app/console KallitheaHousekeeping -x delete')
+    ->in($projectDir)
+    ->daily()
+    ->at('23:10')
+    ->description('Kallithea :: Delete a snapshot @ 11:10PM daily')
+    ->appendOutputTo('logs/jobs.log');
+return $kallitheaJob;
+?>
