@@ -22,19 +22,20 @@ class ConsoleArguments
         return $this->valuesList[2];
     }
 
-    public function getCommands()
-    {
-        return array_slice($this->getArgumentsAsArray(), 3);
+    public function getOptions()
+    {        
+        $this->options = array_slice($this->valuesList, $this->minArgumentCount);
+        return $this;
     }
 
-    public function getArgumentsAsArray() 
+    public function asArray()
     {
-        return $this->valuesList;
+        return $this->options;
     }
 
-    public function getArgumentsAsString() 
+    public function asString()
     {
-        return implode(',', $this->valuesList);
+        return implode(' ', $this->options);
     }
 
     public function getCount() 
@@ -45,7 +46,7 @@ class ConsoleArguments
     private function validate() 
     {
         if ($this->count < $this->minArgumentCount) {
-            throw new TaskException(Messages::getMessage(ResponseStates::S_MISSING_ARGUMENT));
+            throw new TaskException(Messages::getMessage(ResponseStates::S_MISSING_ARGUMENT), ResponseStates::S_MISSING_ARGUMENT);
         }
     }
 }

@@ -1,98 +1,99 @@
 <?php
 use Piwik\Ini\IniReader;
+use Psr\Log\LogLevel;
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\ColorLineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\StdoutHandler;
+use Ec2SnapshotsManagement\Commons\Settings;
 use Ec2SnapshotsManagement\Exceptions\TaskException;
 use Ec2SnapshotsManagement\Exceptions\ErrorHandler;
 use Ec2SnapshotsManagement\Helpers\ConsoleArguments;
+use Ec2SnapshotsManagement\Commons\Messages;
 use Ec2SnapshotsManagement\Helpers\AwsCredentials;
 
 class Run 
 {
-    private $iniReader;
     private $argumentValues;
     private $argumentCount;
-    protected $appSettings;
-    protected $isDebug = false;
+    private $appSettings;
+    private $awsCredentials;
     
     public function __construct($argv, $argc) 
     {
-        $this->setIniReader();
-        $this->setAppSettings();
+        set_error_handler('self::handleError');
+        $iniReader = new IniReader();
+        $this->appSettings = $iniReader->readFile(SETTINGS_INI);
         $this->setDebugMode();
-        $this->setDisplayErrors();
+        $this->setAppSettings();        
+        $this->setAwsCredentials();        
         try {
             $task = new ConsoleArguments($argv, $argc);
-            $this->runTask($task->getTaskName(), $task->getCommands());
+            $this->runTask($task->getTaskName());
         } catch (Exception $e) {
-            ErrorHandler::handle($e, $this->isDebugMode());
-        }
-        
-        // $credentialsProvider = new AwsCredentials();
-        // $awsCredentials = $credentialsProvider->setAwsCredentials([
-        //     'iniFile' => AWS_CREDENTIALS_INI,
-        //     'profile' => 'default'
-        // ])->getAwsCredentials();
-        // var_dump($awsCredentials);
+            ErrorHandler::setAlertCode($e->getCode());
+            ErrorHandler::handle($e);
+        }        
     }
 
-    private function runTask($taskName, $commands)
+    private function runTask($taskName)
     {
         try {
             require ROOT_DIR . DIRECTORY_SEPARATOR . APP_DIR . DIRECTORY_SEPARATOR . 'Tasks' . DIRECTORY_SEPARATOR . $taskName . '.php';
-            return new $taskName($commands);
+            $task = new $taskName();
+            $task->initConsole()
+                ->printTaskDetails()
+                ->setAwsCredentials($this->awsCredentials)            
+                ->execute();
         } catch (Exception $e) {
-            ErrorHandler::handle($e, $this->isDebugMode());
+            ErrorHandler::handle($e);
         }
-    }
-
-    private function setIniReader() 
-    {
-        $this->iniReader = new IniReader();
-    }
-
-    protected function getIniReader() 
-    {
-        return $this->iniReader;
+        return;
     }
 
     private function setAppSettings() 
+    {        
+        Settings::load($this->appSettings);
+        Settings::convert();
+        //[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n DEFAULT FORMAT
+        $streamFormatter = new LineFormatter("[%datetime%] %channel%.%level_name%: %message% %context%" . PHP_EOL, 'Y-m-d H:i:s.u');
+        $consoleFormatter = new ColorLineFormatter("[c=yellow]" . "- %message% %context%" . "[/c]" . PHP_EOL);
+        $stream = new StreamHandler(LOG_DIR . '/' . $this->appSettings['general']['environment'] . '-' . date('Y-m-d') . '.log', Logger::DEBUG);
+        $stream->setFormatter($streamFormatter);
+        $console = new StdoutHandler();
+        $console->setFormatter($consoleFormatter);
+        $logger = new Logger($this->appSettings['general']['app_name']);
+        $logger->pushHandler($stream);
+        $logger->pushHandler($console);
+        Settings::setLogger($logger);
+    }
+
+    private function setAwsCredentials()
     {
-        $this->appSettings = $this->iniReader->readFile(SETTINGS_INI);
-        $this->setGlobal('APP_SETTINGS', $this->appSettings);
+        $credentialsProvider = new AwsCredentials();
+        $this->awsCredentials = $credentialsProvider->setAwsCredentials([
+            'iniFile' => AWS_CREDENTIALS_INI,
+            'profile' => $this->appSettings['aws_defaults']['profile']
+        ])->getAwsCredentials();
     }
 
-    protected function getAppSettings() 
-    {
-        return $this->appSettings;
-    }
-
-    private function setDebugMode() {
-        if (isset($this->getAppSettings()['general']['debug']) && $this->getAppSettings()['general']['debug'] == 1) {            
-            $this->isDebug = true;
-            $this->setGlobal('DEBUG_MODE', $this->isDebug);
-        }
-    }
-
-    protected function isDebugMode() {
-        return $this->isDebug;
-    }
-
-    private function setDisplayErrors()
-    {
-        if (!$this->isDebugMode()) {            
-            ini_set('display_errors', 0);
-            ini_set('display_startup_errors', 0);
-            ini_set('error_reporting', 0);
-        } else {
+    private function setDebugMode() 
+    {        
+        if (isset($this->appSettings['general']['debug']) && $this->appSettings['general']['debug'] == 1) { // Debug mode
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             ini_set('error_reporting', E_ALL);
+        } else { // Silent - no debug
+            ini_set('display_errors', 0);
+            ini_set('display_startup_errors', 0);
+            ini_set('error_reporting', 0);
         }
     }
 
-    private function setGlobal($key, $value)
+    private static function handleError($errorNum, $errorString, $errorFile, $errorLine) // Wrap the error handling method from ErrorHandler class in a local method
     {
-        global ${$key};
-        ${$key} = $value;
+        ErrorHandler::handleError($errorNum, $errorString, $errorFile, $errorLine);
     }
 }    
 ?>

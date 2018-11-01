@@ -1,5 +1,9 @@
 <?php
 namespace Ec2SnapshotsManagement\Lib;
+use Ec2SnapshotsManagement\Commons\Settings;
+use Ec2SnapshotsManagement\Commons\Messages;
+use GuzzleHttp\Promise;
+use Aws\Exception\AwsException;
 use Aws\Ec2\Ec2Client;
 
 class Ec2SnapshotsManager
@@ -57,6 +61,84 @@ class Ec2SnapshotsManager
         return $this->client->describeSnapshots($this->filters);
     }
 
+    public function createSnapshot($volumeId, $description = '', $dryRun =  true)
+    {
+        try {
+            $promise = $this->client->createSnapshotAsync([
+                'DryRun' => $dryRun,
+                'Description' => $description,
+                'VolumeId' => $volumeId
+            ]);
+            $result = $promise->wait();
+            return $result;
+        } catch (AwsException $e) {
+            Settings::getLogger()->error(__METHOD__, $this->getAwsExceptionDetails($e));
+        }
+    }
+
+    public function createMultipleSnapshots($snapshots = [], $description = '', $dryRun = true)
+    {
+        if (!is_array($snapshots) || empty($snapshots)) {
+            return false;
+        }
+        $results = [];
+        foreach ($snapshots as $snapshot) {
+            $results[] = $this->createSnapshot($snapshot, $description, $dryRun);
+        }
+        return $results;
+    }
+
+    public function deleteSnapshot($snapshotId, $dryRun = true)
+    {
+        try {
+            $promise = $this->client->deleteSnapshotAsync([
+                'DryRun' => $dryRun,
+                'SnapshotId' => $snapshotId
+            ]);        
+            $promise->wait();
+        } catch (AwsException $e) {
+            Settings::getLogger()->error(__METHOD__, $this->getAwsExceptionDetails($e));
+        }
+    }
+
+    public function deleteMultipleSnapshots($snapshots = [], $dryRun = true)
+    {
+        if (!is_array($snapshots) || empty($snapshots)) {
+            return false;
+        }
+        foreach ($snapshots as $snapshot) {
+            $this->deleteSnapshot($snapshot, $dryRun);
+        }
+    }
+
+    public function searchInResult($terms = [], $result)
+    {        
+        if (is_object($terms)) {
+            return false;
+        }
+        if (is_string($terms)) {
+            $terms = explode(',', $terms);
+        }
+        $found = [];
+        foreach($terms as $key => $term) {
+            $term = trim($term);
+            $found[] = $term . ': ' . $result->search($term);
+        }        
+        return $found;
+    }
+
+    public function searchInMultipleResults($terms = [], $results)
+    {
+        if (!is_array($results)) {
+            return false;
+        }
+        $found = [];
+        foreach ($results as $result) {
+            $found[] = $this->searchInResult($terms, $result);
+        }
+        return $found;
+    }
+
     public function filters($filters = []) 
     {
         if (empty($filters)) {
@@ -85,6 +167,16 @@ class Ec2SnapshotsManager
             return true;
         }
         return false;
+    }
+
+    private function getAwsExceptionDetails($awsException) 
+    {
+        return [
+            'HttpStatusCode: ' . $awsException->getStatusCode(),
+            'AwsRequestId: ' . $awsException->getAwsRequestId(),
+            'AwsErrorCode: ' . $awsException->getAwsErrorCode(),
+            'AwsErrorCode: ' . $awsException->getAwsErrorMessage()
+        ];
     }
 }
 
