@@ -1,0 +1,14 @@
+[general]
+app_name = 'AWS EC2 SS Manager'
+environment = dev
+debug = 1
+
+[rules]
+retain_min = 2              ; how many snapshot copies to keep
+delete_older_than = 2       ; how many days to keep
+
+[aws_defaults]
+dry_run = 0                 ; value of 0 or 1 (boolean)
+region = ap-southeast-1
+profile = default
+version = latest
