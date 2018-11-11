@@ -1,8 +1,8 @@
-# AWS EC2 Snapshots Management
+# AWS EC2 Snapshots Create and Delete
 
 #### (terminal application only)
 
-*Description: Supposedly a simple AWS snapshots manager terminal app*
+*Description: Supposedly a simple AWS snapshots create and delete terminal app*
 
 ## Intro
 
