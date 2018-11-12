@@ -1,5 +1,5 @@
 [general]
-app_name = 'AWS EC2 SS Manager'
+app_name = 'AWS EC2 SS Create and Delete'
 environment = dev
 debug = 1
 
