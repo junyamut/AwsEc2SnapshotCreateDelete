@@ -6,7 +6,7 @@
 
 ## Intro
 
-A simple terminal application to manage Snapshots of AWS EC2 volumes by creating and deleting old ones as necessary.
+A terminal application to manage Snapshots of AWS EC2 volumes by creating a new snapshot and deleting old ones as necessary.
 
 ## Requirements
 * Ubuntu 14.04+
@@ -18,7 +18,7 @@ A simple terminal application to manage Snapshots of AWS EC2 volumes by creating
 2. The command to run a task is *app/console {NAME_OF_TASK_PHP_CLASS_FILE} --execute {COMMAND}*
 3. Alternatively you can go into the app folder and run the following
 4. *./console {NAME_OF_TASK_PHP_CLASS_FILE} --execute {COMMAND}*
-5. For example, *app/console RedmineHousekeeping --execute create*
+5. For example, *app/console KallitheaHousekeeping --execute create*
 6. For additional command line options run, *app/console {NAME_OF_TASK_PHP_CLASS_FILE} --help*
 
 ## Other Dependencies
@@ -34,7 +34,7 @@ A simple terminal application to manage Snapshots of AWS EC2 volumes by creating
 ## Things To Note
 * Supply proper values @ app/Config/settings.ini. It is self-explanatory.
 * Your AWS credentials must be @ app/Config/credentials.ini with permissions for EC2 describe/create/delete snapshots
-* Sample Task definition is @ app/Tasks/RedmineHousekeeping.php
-* Sample Job schedule is @ jobs/RedmineHousekeepingTasks.php
+* Sample Task definition is @ app/Tasks/KallitheaHousekeeping.php
+* Sample Job schedule is @ jobs/KallitheaHousekeepingTasks.php
 * Definitions @ app/Interfaces/TaskTemplates.php and @ app/Lib/BaseTask.php on how to create a Task class
 * Class for handling AWS EC2 describe/create/delete methods @ app/Lib/Ec2SnapshotsManager.php
